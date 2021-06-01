@@ -90,6 +90,8 @@ async def create_new_channel(name):
 # create a new channel with the same permissions in the same category with "[NAME] #[NUMBER]+1"
 
 def rename_current_channel(id):
+    newname = name[:len(name)-1] + str(int(name[-1])-1)
+    await discord.abc.GuildChannel.edit(*,name=newname, reason="autochannel")
 
 
 # rename a channel with "[NAME] #[NUMBER]-1"
