@@ -27,7 +27,8 @@ async def on_ready():
 
 @bot.command(name="help")
 async def help(ctx):
-    embed=discord.Embed(title="Usage", description="Current Prefix = c!")
+    embed=discord.Embed(title="Current Prefix ", description="c!")
+    embed.set_author(name="Usage")
     embed.set_thumbnail(url="https://i.imgur.com/GKadtia.png")
     embed.add_field(name="create_autochannel", value="[Admin Only] You need to go in a voice channel and process with this command to make this channel automatic", inline=True)
     embed.add_field(name="remove_autochannel [ID]", value="[Admin Only] Remove an autochannel using its specific ID", inline=True)
