@@ -33,7 +33,7 @@ async def on_voice_state_update(member, before, after):
 
 @bot.command(name="help")
 async def help(ctx):
-    embed=discord.Embed(title="Current Prefix ", description="c!")
+    embed=discord.Embed(title="Current Prefix ", description=command_prefix)
     embed.set_author(name="Usage")
     embed.set_thumbnail(url="https://i.imgur.com/GKadtia.png")
     embed.add_field(name="create_autochannel", value="[Admin Only] You need to go in a voice channel and process with this command to make this channel automatic, the same permissions and category of the inital channel will be used", inline=True)
