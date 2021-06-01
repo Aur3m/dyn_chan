@@ -40,6 +40,30 @@ async def help(ctx):
 
 @bot.command(name="create")
 async def create(ctx):
+    print(type(ctx.author.voice.channel.name))
+    #print(ctx.author.roles)
+    if ctx.author.voice.channel is None or ctx.message.author.guild_permissions.administrator == False:
+        return await ctx.send("you must be in a voice channel and an admin to use this command.")
+
+
+    with open(str(ctx.guild.id) + ".json", "w+", encoding="utf8") as jsonfile:
+        if jsonfile.read() == "":
+            jsonfile.write(json.dumps({"guild_id": ctx.guild.id}, indent=4))
+
+    with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+
+        jsonfile.seek(0)
+
+        content = json.load(jsonfile)
+        content[ctx.author.voice.channel.name] = {"name": str(ctx.author.voice.channel.name),
+                                                  "count": 1}
+        content = json.dumps(content, indent=4, ensure_ascii=False)
+
+    with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+        jsonfile.write(content)
+
+    await ctx.send("json file created.")
+
 
 
 # verify if the user using the command has the admin permission
