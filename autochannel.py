@@ -102,8 +102,4 @@ def remove_channel(id):
 
 # remove, delete the concerned channel
 
-def init_autochannel():
-    
-def remove_autochannel():
-
 bot.run(token)
