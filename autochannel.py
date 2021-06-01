@@ -66,7 +66,7 @@ def remove_channel(id):
 
 # remove, delete the concerned channel
 
-def add_autochannel():
+def init_autochannel():
     
 def remove_autochannel():
 
