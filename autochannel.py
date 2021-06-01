@@ -81,7 +81,9 @@ async def list(ctx):
 
 # parse the current active autochannels and their ids from the concerned .json of the current server
 
-def create_new_channel(id):
+def create_new_channel(id, name):
+    newname = (name - name[-1]) + int(name[-1]+1)
+    await clone(*, name=newname, reason=autochannel)
     
 
 
