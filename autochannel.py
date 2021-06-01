@@ -69,12 +69,6 @@ async def create(ctx):
 # verify if the user using the command has the admin permission
 # create a .json with the server id and assign an id to this new autochannel
 
-@bot.command(name="remove")
-async def remove(ctx, id):
-
-
-# remove one of the numerous autochannels defined for the server
-
 @bot.command(name="list")
 async def list(ctx):
 
