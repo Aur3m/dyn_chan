@@ -30,8 +30,8 @@ async def help(ctx):
     embed=discord.Embed(title="Current Prefix ", description="c!")
     embed.set_author(name="Usage")
     embed.set_thumbnail(url="https://i.imgur.com/GKadtia.png")
-    embed.add_field(name="create_autochannel", value="[Admin Only] You need to go in a voice channel and process with this command to make this channel automatic", inline=True)
-    embed.add_field(name="remove_autochannel [ID]", value="[Admin Only] Remove an autochannel using its specific ID", inline=True)
+    embed.add_field(name="create_autochannel", value="[Admin Only] You need to go in a voice channel and process with this command to make this channel automatic, the same permissions and category of the inital channel will be used", inline=True)
+    embed.add_field(name="remove_autochannel [ID]", value="[Admin Only] Remove an autochannel using its specific ID, all channels will be deleted once all players left", inline=True)
     embed.add_field(name="list", value="List all the current autochannels of your server and their ID(s)", inline=True)
     await ctx.send(embed=embed)
 
