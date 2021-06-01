@@ -81,7 +81,7 @@ async def list(ctx):
 
 # parse the current active autochannels and their ids from the concerned .json of the current server
 
-async def create_new_channel(name):
+async def create_new_channel(id,name):
     newname = name[:len(name)-1] + str(int(name[-1])+1)
     await discord.abc.GuildChannel.clone(name=newname, reason="autochannel")
     
@@ -89,7 +89,7 @@ async def create_new_channel(name):
 
 # create a new channel with the same permissions in the same category with "[NAME] #[NUMBER]+1"
 
-def rename_current_channel(id):
+def rename_current_channel(id,name):
     newname = name[:len(name)-1] + str(int(name[-1])-1)
     await discord.abc.GuildChannel.edit(*,name=newname, reason="autochannel")
 
