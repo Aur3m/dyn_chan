@@ -18,12 +18,21 @@ async def on_ready():
    bot.run(token)
     
 @bot.command(name="help")
-async def help(ctx, extension):
+async def help():
     #print "help" text
     
 @bot.command(name="create")
-async def help(ctx, extension):
+async def create():
     #verify if the user using the command has the admin permission
+    #create a .json with the server id and assign an id to this new autochannel
+    
+@bot.command(name="remove")
+async def remove(id):
+    #remove one of the numerous autochannels defined for the server
+    
+@bot.command(name="list")
+async def list():
+    #parse the current active autochannels and their ids from the concerned .json of the current server
    
 def create_new_channel(id):
     #create a new channel with the same permissions in the same category with "[NAME] #[NUMBER]+1"
