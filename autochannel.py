@@ -23,7 +23,13 @@ async def on_ready():
     print("loaded")
     await bot.change_presence(
         activity=discord.Activity(type=discord.ActivityType.watching, name="c!help for more information"))
-
+@bot.event
+async def on_voice_state_update(member, before, after):
+    print(after)
+    with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+        content = json.load(jsonfile)
+        if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+            await create_new_channel(after.channel)
 
 @bot.command(name="help")
 async def help(ctx):
