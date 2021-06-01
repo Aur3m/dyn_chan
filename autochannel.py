@@ -25,11 +25,17 @@ async def on_ready():
         activity=discord.Activity(type=discord.ActivityType.watching, name="c!help for more information"))
 @bot.event
 async def on_voice_state_update(member, before, after):
-    print(after)
-    with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
-        content = json.load(jsonfile)
-        if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
-            await create_new_channel(after.channel)
+    if after.channel.name != before.channel.name and after.channel.name is not None:
+        with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+            content = json.load(jsonfile)
+            if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+                await create_new_channel(after.channel)
+
+    if after.channel.name != before.channel.name:
+        with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+            content = json.load(jsonfile)
+            if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
+                await remove_channel(before.channel)
 
 @bot.command(name="help")
 async def help(ctx):
@@ -89,15 +95,16 @@ async def create_new_channel(channel):
 
 # create a new channel with the same permissions in the same category with "[NAME] #[NUMBER]+1"
 
-async def rename_current_channel(id,name):
-    newname = name[:len(name)-1] + str(int(name[-1])-1)
-    await discord.abc.GuildChannel.edit(*,name=newname, reason="autochannel")
+async def rename_current_channel(channel):
+    newname = channel.name[:len(channel.name)-1] + str(int(channel.name[-1])-1)
+    await channel.edit(name=newname, reason="autochannel")
 
 
 # rename a channel with "[NAME] #[NUMBER]-1"
 
-def remove_channel(id):
-    await discord.abc.GuildChannel.delete(*, reason="autochannel")
+async def remove_channel(channel):
+# remove, delete the concerned channel
+    await channel.delete(reason="autochannel_del")
 
 
 # remove, delete the concerned channel
