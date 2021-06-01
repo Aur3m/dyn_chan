@@ -97,6 +97,7 @@ def rename_current_channel(id,name):
 # rename a channel with "[NAME] #[NUMBER]-1"
 
 def remove_channel(id):
+    await discord.abc.GuildChannel.delete(*, reason="autochannel")
 
 
 # remove, delete the concerned channel
