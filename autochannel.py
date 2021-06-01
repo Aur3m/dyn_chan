@@ -43,7 +43,7 @@ async def create(ctx):
     print(type(ctx.author.voice.channel.name))
     #print(ctx.author.roles)
     if ctx.author.voice.channel is None or ctx.message.author.guild_permissions.administrator == False:
-        return await ctx.send("you must be in a voice channel and an admin to use this command.")
+        return await ctx.send("You must be in a voice channel and check if you have admin permission to use this command.")
 
 
     with open(str(ctx.guild.id) + ".json", "w+", encoding="utf8") as jsonfile:
