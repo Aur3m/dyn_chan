@@ -81,9 +81,9 @@ async def list(ctx):
 
 # parse the current active autochannels and their ids from the concerned .json of the current server
 
-async def create_new_channel(id,name):
-    newname = name[:len(name)-1] + str(int(name[-1])+1)
-    await discord.abc.GuildChannel.clone(name=newname, reason="autochannel")
+async def create_new_channel(channel):
+    newname = channel.name[:len(channel.name)-1] + str(int(channel.name[-1])+1)
+    await channel.clone(name=newname, reason="autochannel")
     
 
 
