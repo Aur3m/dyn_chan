@@ -31,16 +31,16 @@ async def on_voice_state_update(member, before, after):
             try:
                 with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                     content = json.load(jsonfile)
-                    if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+                    if after.channel.name[:len(after.channel.name)-3] in content.keys():
                         #print(content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"])
-                        content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
+                        content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
                         await create_new_channel(after.channel)
 
-                    if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
-                        if content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] - 1 == 0:
+                    if before.channel.name[:len(before.channel.name)-3] in content.keys():
+                        if content[before.channel.name[:len(before.channel.name) - 3]]["count"] - 1 == 0:
                             pass
                         else:
-                            content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
+                            content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
                             await remove_channel(before.channel)
 
                     with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
@@ -53,8 +53,8 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                if after.channel.name[:len(after.channel.name) - 1] + "1" in content.keys():
-                    content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
+                if after.channel.name[:len(after.channel.name) - 3] in content.keys():
+                    content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
                     await create_new_channel(after.channel)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
@@ -67,11 +67,11 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                if before.channel.name[:len(before.channel.name) - 1] + "1" in content.keys():
-                    if content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -1 == 0:
+                if before.channel.name[:len(before.channel.name) - 3] in content.keys():
+                    if content[before.channel.name[:len(before.channel.name) - 3]]["count"] -1 == 0:
                         pass
                     else:
-                        content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
+                        content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
                         await remove_channel(before.channel)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
@@ -79,7 +79,6 @@ async def on_voice_state_update(member, before, after):
 
         except:
             print("not an autochannel")
-
 
 @bot.command(name="help")
 async def help(ctx):
@@ -94,6 +93,7 @@ async def help(ctx):
 
 # print "help" text
 
+@bot.command(name="create")
 @bot.command(name="create")
 async def create(ctx):
     is_clear = False
@@ -115,7 +115,7 @@ async def create(ctx):
         jsonfile.seek(0)
 
         content = json.load(jsonfile)
-        content[ctx.author.voice.channel.name + " #1"] = {"name": ctx.author.voice.channel.name + " #1",
+        content[ctx.author.voice.channel.name] = {"name": ctx.author.voice.channel.name,
                                                   "category": ctx.author.voice.channel.category.id,
                                                   "count": 1}
         content = json.dumps(content, indent=4, ensure_ascii=False)
@@ -132,6 +132,23 @@ async def create(ctx):
 
 @bot.command(name="list")
 async def list(ctx):
+    with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+        content = json.load(jsonfile)
+        embed = discord.Embed(title="Autochanels ", description="list of all the autochannel of the server.")
+
+        for i in content.keys():
+            try:
+
+                channel_list = ctx.guild.get_channel(content[i]["category"]).voice_channels
+                print(channel_list)
+                value = ""
+                for j in channel_list:
+                    if j.name[:len(j.name)-3] == i:
+                        value += j.name +" / " + str(j.id) + "\n"
+                embed.add_field(name=i, value=value, inline=False)
+            except:
+                print("not this")
+        await ctx.send(embed=embed)
 
 
 # parse the current active autochannels and their ids from the concerned .json of the current server
