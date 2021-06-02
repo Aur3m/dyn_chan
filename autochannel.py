@@ -115,7 +115,7 @@ async def create(ctx):
         jsonfile.seek(0)
 
         content = json.load(jsonfile)
-        content[ctx.author.voice.channel.name + "#1"] = {"name": ctx.author.voice.channel.name + " #1",
+        content[ctx.author.voice.channel.name + " #1"] = {"name": ctx.author.voice.channel.name + " #1",
                                                   "category": ctx.author.voice.channel.category.id,
                                                   "count": 1}
         content = json.dumps(content, indent=4, ensure_ascii=False)
@@ -123,7 +123,7 @@ async def create(ctx):
     with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
         jsonfile.write(content)
 
-    await ctx.author.voice.channel.edit(name=ctx.author.voice.channel.name + "#1")
+    await ctx.author.voice.channel.edit(name=ctx.author.voice.channel.name + " #1")
     await ctx.send("json file created.")
 
 
