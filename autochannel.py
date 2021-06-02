@@ -23,44 +23,62 @@ async def on_ready():
     print("loaded")
     await bot.change_presence(
         activity=discord.Activity(type=discord.ActivityType.watching, name="c!help for more information"))
+    
 @bot.event
 async def on_voice_state_update(member, before, after):
     if after.channel is not None and before.channel is not None:
         if after.channel.name != before.channel.name:
+            try:
+                with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+                    content = json.load(jsonfile)
+                    if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+                        #print(content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"])
+                        content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
+                        await create_new_channel(after.channel)
+
+                    if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
+                        if content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] - 1 == 0:
+                            pass
+                        else:
+                            content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
+                            await remove_channel(before.channel)
+
+                    with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+
+                        jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+            except:
+                print("not an autochannel")
+
+    elif before.channel is None:
+        try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
-                    #print(content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"])
+                if after.channel.name[:len(after.channel.name) - 1] + "1" in content.keys():
                     content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
                     await create_new_channel(after.channel)
 
-                if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
-                    content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
-                    await remove_channel(before.channel)
+            with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+                jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
 
-                with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
-
-                    jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
-
-    elif before.channel is None:
-        with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
-            content = json.load(jsonfile)
-            if after.channel.name[:len(after.channel.name) - 1] + "1" in content.keys():
-                content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
-                await create_new_channel(after.channel)
-
-        with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
-            jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+        except:
+            print("not an autochannel")
 
     elif after.channel is None:
-        with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
-            content = json.load(jsonfile)
-            if before.channel.name[:len(before.channel.name) - 1] + "1" in content.keys():
-                content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
-                await remove_channel(before.channel)
+        try:
+            with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+                content = json.load(jsonfile)
+                if before.channel.name[:len(before.channel.name) - 1] + "1" in content.keys():
+                    if content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -1 == 0:
+                        pass
+                    else:
+                        content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
+                        await remove_channel(before.channel)
 
-        with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
-            jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+            with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+                jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+
+        except:
+            print("not an autochannel")
 
 
 @bot.command(name="help")
@@ -78,14 +96,18 @@ async def help(ctx):
 
 @bot.command(name="create")
 async def create(ctx):
-    print(type(ctx.author.voice.channel.name))
+    is_clear = False
+    #print(type(ctx.author.voice.channel.name))
     #print(ctx.author.roles)
     if ctx.author.voice.channel is None or ctx.message.author.guild_permissions.administrator == False:
-        return await ctx.send("You must be in a voice channel and check if you have admin permission to use this command.")
+        return await ctx.send("you must be in a voice channel and an admin to use this command.")
 
-
-    with open(str(ctx.guild.id) + ".json", "w+", encoding="utf8") as jsonfile:
-        if jsonfile.read() == "":
+    try:
+        with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+            if jsonfile.read() == "":
+                is_clear = True
+    except:
+        with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
             jsonfile.write(json.dumps({"guild_id": ctx.guild.id}, indent=4))
 
     with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
@@ -93,15 +115,16 @@ async def create(ctx):
         jsonfile.seek(0)
 
         content = json.load(jsonfile)
-        content[ctx.author.voice.channel.name] = {"name": str(ctx.author.voice.channel.name),
+        content[ctx.author.voice.channel.name + "#1"] = {"name": ctx.author.voice.channel.name + " #1",
+                                                  "category": ctx.author.voice.channel.category.id,
                                                   "count": 1}
         content = json.dumps(content, indent=4, ensure_ascii=False)
 
     with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
         jsonfile.write(content)
 
+    await ctx.author.voice.channel.edit(name=ctx.author.voice.channel.name + "#1")
     await ctx.send("json file created.")
-
 
 
 # verify if the user using the command has the admin permission
