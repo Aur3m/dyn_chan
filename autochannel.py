@@ -26,22 +26,14 @@ async def on_ready():
     
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if after.channel is not None and before.channel is not None:
+    if after.channel is not None and before.channel is not None: # when you was in a channel and you go in an another channel
         if after.channel.name != before.channel.name:
             try:
                 with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                     content = json.load(jsonfile)
-                    if after.channel.name[:len(after.channel.name)-3] in content.keys():
-                        #print(content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"])
-                        content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
-                        await create_new_channel(after.channel)
+                    await verif_create(content, after)
 
-                    if before.channel.name[:len(before.channel.name)-3] in content.keys():
-                        if content[before.channel.name[:len(before.channel.name) - 3]]["count"] - 1 == 0:
-                            pass
-                        else:
-                            content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
-                            await remove_channel(before.channel)
+                    await verif_remove(content, before)
 
                     with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
 
@@ -53,9 +45,7 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                if after.channel.name[:len(after.channel.name) - 3] in content.keys():
-                    content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
-                    await create_new_channel(after.channel)
+                await verif_create(content, after)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
                 jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
@@ -67,12 +57,7 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                if before.channel.name[:len(before.channel.name) - 3] in content.keys():
-                    if content[before.channel.name[:len(before.channel.name) - 3]]["count"] -1 == 0:
-                        pass
-                    else:
-                        content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
-                        await remove_channel(before.channel)
+                await verif_remove(content, before)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
                 jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
@@ -93,7 +78,7 @@ async def help(ctx):
 
 # print "help" text
 
-@bot.command(name="create")
+
 @bot.command(name="create")
 async def create(ctx):
     is_clear = False
@@ -176,5 +161,18 @@ async def remove_channel(channel):
             await rename_current_channel(i)
 
 # remove, delete the concerned channel
+
+async def verif_create(content, after):
+    if after.channel.name[:len(after.channel.name) - 3] in content.keys():
+        content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
+        await create_new_channel(after.channel)
+
+async def verif_remove(content, before):
+    if before.channel.name[:len(before.channel.name) - 3] in content.keys():
+        if content[before.channel.name[:len(before.channel.name) - 3]]["count"] - 1 == 0:
+            pass
+        else:
+            content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
+            await remove_channel(before.channel)
 
 bot.run(token)
