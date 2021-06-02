@@ -25,17 +25,43 @@ async def on_ready():
         activity=discord.Activity(type=discord.ActivityType.watching, name="c!help for more information"))
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if after.channel.name != before.channel.name and after.channel.name is not None:
+    if after.channel is not None and before.channel is not None:
+        if after.channel.name != before.channel.name:
+            with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+                content = json.load(jsonfile)
+                if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+                    #print(content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"])
+                    content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
+                    await create_new_channel(after.channel)
+
+                if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
+                    content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
+                    await remove_channel(before.channel)
+
+                with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+
+                    jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+
+    elif before.channel is None:
         with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
             content = json.load(jsonfile)
-            if after.channel.name[:len(after.channel.name)-1]+ "1" in content.keys():
+            if after.channel.name[:len(after.channel.name) - 1] + "1" in content.keys():
+                content[after.channel.name[:len(after.channel.name) - 1] + "1"]["count"] += 1
                 await create_new_channel(after.channel)
 
-    if after.channel.name != before.channel.name:
+        with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+            jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+
+    elif after.channel is None:
         with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
             content = json.load(jsonfile)
-            if before.channel.name[:len(before.channel.name)-1]+ "1" in content.keys():
+            if before.channel.name[:len(before.channel.name) - 1] + "1" in content.keys():
+                content[before.channel.name[:len(before.channel.name) - 1] + "1"]["count"] -= 1
                 await remove_channel(before.channel)
+
+        with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+            jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+
 
 @bot.command(name="help")
 async def help(ctx):
