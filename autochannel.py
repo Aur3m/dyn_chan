@@ -131,7 +131,9 @@ async def rename_current_channel(channel):
 async def remove_channel(channel):
 # remove, delete the concerned channel
     await channel.delete(reason="autochannel_del")
-
+    for i in channel.category.channels:
+        if i.name[:len(i.name)-1] == channel.name[:len(channel.name)-1]:
+            await rename_current_channel(i)
 
 # remove, delete the concerned channel
 
