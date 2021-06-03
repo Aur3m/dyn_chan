@@ -31,13 +31,15 @@ async def on_voice_state_update(member, before, after):
             try:
                 with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                     content = json.load(jsonfile)
-                    await verif_create(content, after)
+                    if len(after.channel.members) <= 1:
+                        await verif_create(content, after)
 
-                    await verif_remove(content, before)
+                    if len(before.channel.members) == 0:
+                        await verif_remove(content, before)
 
-                    with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
+                with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
 
-                        jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
+                    jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
             except:
                 print("not an autochannel")
 
@@ -45,7 +47,8 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                await verif_create(content, after)
+                if len(after.channel.members) <= 1:
+                    await verif_create(content, after)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
                 jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
@@ -57,7 +60,8 @@ async def on_voice_state_update(member, before, after):
         try:
             with open(str(member.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
                 content = json.load(jsonfile)
-                await verif_remove(content, before)
+                if len(before.channel.members) == 0:
+                    await verif_remove(content, before)
 
             with open(str(member.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
                 jsonfile.write(json.dumps(content, indent=4, ensure_ascii=False))
