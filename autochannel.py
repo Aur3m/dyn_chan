@@ -141,38 +141,41 @@ async def list(ctx):
 async def create_new_channel(channel):
     newname = channel.name[:len(channel.name)-1] + str(int(channel.name[-1])+1)
     await channel.clone(name=newname, reason="autochannel")
-    
-
 
 # create a new channel with the same permissions in the same category with "[NAME] #[NUMBER]+1"
 
+
 async def rename_current_channel(channel):
-    newname = channel.name[:len(channel.name)-1] + str(int(channel.name[-1])-1)
+    newname = channel.name[:channel.name.find("#")+1] + str(int(channel.name[channel.name.find("#")+1:])-1)
     await channel.edit(name=newname, reason="autochannel")
 
-
 # rename a channel with "[NAME] #[NUMBER]-1"
+
 
 async def remove_channel(channel):
 # remove, delete the concerned channel
     await channel.delete(reason="autochannel_del")
     for i in channel.category.channels:
-        if i.name[:len(i.name)-1] == channel.name[:len(channel.name)-1]:
+        print("i " + i.name[:i.name.find("#")])
+        if i.name[:i.name.find("#")] == channel.name[:channel.name.find("#")]:
             await rename_current_channel(i)
 
-# remove, delete the concerned channel
 
 async def verif_create(content, after):
-    if after.channel.name[:len(after.channel.name) - 3] in content.keys():
-        content[after.channel.name[:len(after.channel.name) - 3]]["count"] += 1
+    if after.channel.name[:after.channel.name.find("#")-1] in content.keys():
+
+        content[after.channel.name[:after.channel.name.find("#")-1]]["count"] += 1
         await create_new_channel(after.channel)
 
+
 async def verif_remove(content, before):
-    if before.channel.name[:len(before.channel.name) - 3] in content.keys():
-        if content[before.channel.name[:len(before.channel.name) - 3]]["count"] - 1 == 0:
+    print("verif_remove "+ before.channel.name[:before.channel.name.find("#")-1])
+    if before.channel.name[:before.channel.name.find("#")-1] in content.keys():
+        if content[before.channel.name[:before.channel.name.find("#")-1]]["count"] - 1 == 0:
             pass
         else:
-            content[before.channel.name[:len(before.channel.name) - 3]]["count"] -= 1
+            content[before.channel.name[:before.channel.name.find("#")-1]]["count"] -= 1
             await remove_channel(before.channel)
+
 
 bot.run(token)
