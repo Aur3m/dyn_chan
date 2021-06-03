@@ -93,8 +93,17 @@ async def create(ctx):
 
     try:
         with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
+            content = json.load(jsonfile)
+            if ctx.author.voice.channel.name in content.keys() == True or ctx.author.voice.channel.name.find("#") != -1:
+                return await ctx.send(f"The channel {ctx.author.voice.channel.name} is already statified as an autochannel")
+    except Exception as e:
+        print("bug?", e)
+
+    try:
+        with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
             if jsonfile.read() == "":
                 is_clear = True
+
     except:
         with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
             jsonfile.write(json.dumps({"guild_id": ctx.guild.id}, indent=4))
