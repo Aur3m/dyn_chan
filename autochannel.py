@@ -102,14 +102,6 @@ async def create(ctx):
         with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
             jsonfile.write(json.dumps({"guild_id": ctx.guild.id}, indent=4))
 
-    try:
-        with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
-            if jsonfile.read() == "":
-                is_clear = True
-
-    except:
-        with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
-            jsonfile.write(json.dumps({"guild_id": ctx.guild.id}, indent=4))
 
     with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
 
