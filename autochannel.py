@@ -144,15 +144,18 @@ async def list(ctx):
         await ctx.send(embed=embed)
 
 
+@bot.command(name="remove")
 async def remove(ctx, arg):
+
+    if ctx.message.author.guild_permissions.administrator == False:
+        return await ctx.send("You don't have the admin permission, you can't perform this command.")
+
     #enlever l'id correspondant du json
     with open(str(ctx.guild.id) + ".json", "r", encoding="utf8") as jsonfile:
         content = json.load(jsonfile)
+        cat_id = content[arg]["category"]
 
-        if ctx.message.author.guild_permissions.administrator == False:
-            return await ctx.send("You don't have the admin permission, you can't perform this command.")
-
-        elif arg not in content.keys():
+        if arg not in content.keys():
             return await ctx.send("Could not find any autochannel with this ID, try c!list to spot the current active autochannels and their IDs")
 
         del content[arg]
@@ -160,6 +163,8 @@ async def remove(ctx, arg):
 
     with open(str(ctx.guild.id) + ".json", "w", encoding="utf8") as jsonfile:
         jsonfile.write(content)
+
+    await checking_delete(ctx.guild.get_channel(cat_id))
     #supprimer les channels correspondants lorsqu'il n'y a plus personnes dedans
 
 
