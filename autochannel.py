@@ -208,6 +208,13 @@ async def verif_remove(content, before):
         else:
             content[before.channel.name[:before.channel.name.find("#")-1]]["count"] -= 1
             await remove_channel(before.channel)
+   
+async def checking_delete(category):
+    for i in category.channels:
+        pass
+        if i.members == 0:
+            await remove_channel(i)
+
 
 
 bot.run(token)
